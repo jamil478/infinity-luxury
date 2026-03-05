@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infinity Luxury | $10K Vision</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Inter:wght@100;300;600&display=swap" rel="stylesheet">
+    <style>
+        :root { --gold: #d4af37; --bg: #000; }
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
+        
+        body {
+            background-color: var(--bg);
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* ৩ডি ক্যানভাস */
+        #canvas-container {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 1;
+        }
+
+        /* ইন্টারফেস লেয়ার */
+        .overlay {
+            position: relative;
+            z-index: 10;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 50px;
+            pointer-events: none;
+        }
+
+        .nav { display: flex; justify-content: space-between; pointer-events: auto; }
+        .logo { font-family: 'Syncopate', sans-serif; letter-spacing: 5px; font-weight: 700; font-size: 1.2rem; }
+
+        .hero-text {
+            text-align: center;
+            transform: translateY(-50px);
+        }
+
+        .hero-text h1 {
+            font-family: 'Syncopate', sans-serif;
+            font-size: 8vw;
+            line-height: 0.9;
+            text-transform: uppercase;
+            background: linear-gradient(180deg, #fff 0%, rgba(255,255,255,0) 150%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .tagline {
+            font-size: 10px;
+            letter-spacing: 15px;
+            text-transform: uppercase;
+            opacity: 0.5;
+            margin-bottom: 20px;
+        }
+
+        /* প্রিমিয়াম বাটন */
+        .cta-btn {
+            pointer-events: auto;
+            margin-top: 40px;
+            padding: 20px 60px;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 8px;
+            font-size: 10px;
+            border-radius: 100px;
+            transition: 0.5s;
+            backdrop-filter: blur(10px);
+        }
+
+        .cta-btn:hover {
+            background: #fff;
+            color: #000;
+            box-shadow: 0 0 50px rgba(255,255,255,0.3);
+        }
+
+        /* কাস্টম কার্সার */
+        #cursor {
+            position: fixed;
+            width: 10px; height: 100px;
+            background: white;
+            z-index: 1000;
+            pointer-events: none;
+            mix-blend-mode: difference;
+            transition: 0.1s;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="cursor"></div>
+    <div id="canvas-container"></div>
+
+    <div class="overlay">
+        <div class="nav">
+            <div class="logo">INFINITY.OS</div>
+            <div style="opacity: 0.5; letter-spacing: 2px;">EST. 2026 // GEN-III</div>
+        </div>
+
+        <div class="hero-text">
+            <p class="tagline">The Future of Digital Assets</p>
+            <h1>BEYOND<br>REALITY</h1>
+            <button class="cta-btn">Initialize Experience</button>
+        </div>
+
+        <div class="nav" style="font-size: 10px; opacity: 0.3;">
+            <div>LATITUDE: 23.8103° N</div>
+            <div>LONGITUDE: 90.4125° E</div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        let scene, camera, renderer, particles;
+
+        function init() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 3;
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+            // ৩ডি পার্টিকেল স্ফিয়ার তৈরি
+            const geometry = new THREE.BufferGeometry();
+            const vertices = [];
+            for (let i = 0; i < 5000; i++) {
+                const x = (Math.random() - 0.5) * 10;
+                const y = (Math.random() - 0.5) * 10;
+                const z = (Math.random() - 0.5) * 10;
+                vertices.push(x, y, z);
+            }
+            geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+            
+            const material = new THREE.PointsMaterial({ color: 0xffffff, size: 0.005 });
+            particles = new THREE.Points(geometry, material);
+            scene.add(particles);
+
+            animate();
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            particles.rotation.y += 0.001;
+            particles.rotation.x += 0.0005;
+            renderer.render(scene, camera);
+        }
+
+        // মাউস ইন্টারঅ্যাকশন
+        document.addEventListener('mousemove', (e) => {
+            const cursor = document.getElementById('cursor');
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+            
+            // পার্টিকেল মুভমেন্ট
+            particles.rotation.y = e.clientX * 0.0005;
+            particles.rotation.x = e.clientY * 0.0005;
+        });
+
+        init();
+    </script>
+</body>
+</html>
